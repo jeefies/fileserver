@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Download Index</h2>
+<h3>Files</h3>
+<ul>
+	{% for f in files %}
+	<li>
+		<a href="{{f[1]}}" style='font-size: 1.25em'>{{ f[0] }}</a>
+	</li>
+	{% endfor %}
+</ul>
+<h3>Directories</h3>
+<ul>
+	{% for d in dirs %}
+	<li>
+		<a href="{{d[1]}}" style='font-size: 1.25em'>{{ d[0] }}</a>
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

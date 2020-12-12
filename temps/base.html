@@ -1,0 +1,43 @@
+{% block doc -%}
+<!DOCTYPE html>
+<html{% block html_attribs %}{% endblock html_attribs %}>
+{%- block html %}
+  <head>
+    {%- block head %}
+    <title>{% block title %}{{title|default}}{% endblock title %}</title>
+    <link rel="shortcut icon" href='{{_sts[3]}}'>
+
+    {%- block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%- endblock metas %}
+
+    {%- block styles %}
+    <!-- Bootstrap -->
+    <link href="{{ _sts[2] }}" rel="stylesheet">
+    {%- endblock styles %}
+    {%- endblock head %}
+  </head>
+  <body{% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
+    {% block navbar %}
+    {%- endblock navbar %}
+    <div class='container'>
+	{% for msg in get_flashed_messages() %}
+	<div class='alert alert-dismissable' style='background-color: rgb(150, 150, 150); color: rgb(255, 255, 255)'>
+		<button type='button' class='close' data-dismiss='alert'>&times;</button>
+		{{ msg }}
+	</div>
+	{% endfor %}
+    </div>
+    {% block content -%}
+    {%- endblock content %}
+
+    {% block scripts %}
+    <script src="{{ _sts[0] }}"></script>
+    <script src="{{ _sts[1] }}"></script>
+    {%- endblock scripts %}
+    {%- endblock body %}
+  </body>
+{%- endblock html %}
+</html>
+{% endblock doc -%}

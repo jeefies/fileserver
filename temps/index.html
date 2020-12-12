@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Jeefy - {% endblock %}
+
+{% block navbar %}
+<h2 style='color: blue'>Easy File server</h2>
+{% endblock %}
+
+{% block content %}
+<div style='background : rgb(230, 230, 230); font-weight: bold; font-size: 1.1em; line-height: 20px; color: rgb(40, 80, 140)'>
+	<p>You can post your file and save it where you open the server</p>
+	<p>It's power by flask, python</p>
+	<p>You can download the files from the page <a href='{{ url_for('downloadm') }}' 
+		style='color: blue; font-size: 1em; text-decoration: none'>Download</a></p>
+</div>
+<div style='font-size: 1.25em; text-decoration: underline'>
+	{{ wtf.quick_form(form) }}
+</div>
+{% endblock %}
