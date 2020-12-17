@@ -1,4 +1,5 @@
 import os
+import sys
 
 from flask import Flask, redirect, abort, url_for, render_template, flash
 from flask_bootstrap import Bootstrap
@@ -81,11 +82,14 @@ def check(stcp, start):
 
 
 if __name__ == '__main__':
-    def run_app():
+    def run_app(iapp):
         import io
         from contextlib import redirect_stdout, redirect_stderr
         f = io.StringIO()
         with redirect_stderr(f), redirect_stdout(f):
-            _app.run('0.0.0.0', 5001)
-    Process(target=run_app).start()
-    Process(target=app.run, args=('0.0.0.0', 5000)).start()
+            iapp.run('0.0.0.0', 5001)
+    Process(target=run_app, args = (_app, )).start()
+    if '-q' in sys.argv or '--quiet' in  sys.argv:
+        Process(target=run_app, args = (app,)).start()
+    else:
+        Process(target=app.run, args=('0.0.0.0', 5000)).start()
