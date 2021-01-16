@@ -1,7 +1,10 @@
 import os
 import sys
+import uuid
+from functools import lru_cache
 
 from flask import Flask, redirect, abort, url_for, render_template, flash
+from flask import make_response
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField, StringField
@@ -16,26 +19,20 @@ class FileForm(FlaskForm):
 
 
 path = os.getcwd()
+join = os.path.join
 base = os.path.dirname(os.path.abspath(__file__))
 tempf = os.path.join(base, 'temps')
 
 app = Flask(__name__, template_folder=tempf, static_folder=path)
-app.config['SECRET_KEY'] = 'hard to get a kkey'
+app.config['SECRET_KEY'] = uuid.uuid1().hex
 bootstrap = Bootstrap(app)
 
-_j = os.path.join
-p = _j(base, 'static')
-_app = Flask(__name__, static_folder=p)
-static = 'http://0.0.0.0:5001/static'
-stcs = [os.path.join(static, n) for n in ['jquery.js',
-                                          'bootstrap.js', 'bootstrap.css', 'favicon.ico']]
-del _j, p
+render = render_template
 
-
-def render(file, **kwargs):
-    kwargs['_sts'] = stcs
-    return render_template(file, **kwargs)
-
+@app.route('/favicon.ico')
+def icon():
+    with open(os.path.join(base, 'favicon.ico'), 'rb') as f:
+        return f.read()
 
 @app.route('/', methods='GET POST'.split())
 def index():
@@ -75,21 +72,29 @@ def check(stcp, start):
         a = absp(j(start, i))
         p = os.path.join(start, i) if start else i
         if isf(a):
-            af((i, url_for('static', filename=p)))
+            af((i, url_for('stc', filename=p)))
         else:
             ad((i, url_for('download', stcp=p)))
     return render('files.html', dirs=d, files=f)
 
+@app.route('/stc/<path:filename>')
+@lru_cache()
+def stc(filename):
+    with open(join(path, filename), 'rb') as f:
+        con = f.read()
+    rsp = make_response(con)
+    rsp.headers['Content-Type'] = "application/octet-stream"
+    rsp.headers['Content-Disposition'] = (b"attachment;filename=%s" % (filename.encode('utf-8'))).decode('latin-1')
+    return rsp
 
 if __name__ == '__main__':
-    def run_app(iapp):
+    def run_app(iapp, host, port):
         import io
         from contextlib import redirect_stdout, redirect_stderr
         f = io.StringIO()
         with redirect_stderr(f), redirect_stdout(f):
-            iapp.run('0.0.0.0', 5001)
-    Process(target=run_app, args = (_app, )).start()
+            iapp.run(host, port)
     if '-q' in sys.argv or '--quiet' in  sys.argv:
         Process(target=run_app, args = (app,)).start()
     else:
-        Process(target=app.run, args=('0.0.0.0', 5000)).start()
+        Process(target=app.run, args=('0.0.0.0', 5050)).start()

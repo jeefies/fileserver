@@ -5,7 +5,7 @@
   <head>
     {%- block head %}
     <title>{% block title %}{{title|default}}{% endblock title %}</title>
-    <link rel="shortcut icon" href='{{_sts[3]}}'>
+    <link rel="shortcut icon" href='{{ url_for('icon') }}'>
 
     {%- block metas %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
 
     {%- block styles %}
     <!-- Bootstrap -->
-    <link href="{{ _sts[2] }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}" rel="stylesheet">
     {%- endblock styles %}
     {%- endblock head %}
   </head>
@@ -33,8 +33,8 @@
     {%- endblock content %}
 
     {% block scripts %}
-    <script src="{{ _sts[0] }}"></script>
-    <script src="{{ _sts[1] }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
     {%- endblock scripts %}
     {%- endblock body %}
   </body>
