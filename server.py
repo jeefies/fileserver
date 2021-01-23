@@ -1,21 +1,12 @@
 import os
 import sys
 import uuid
+from base64 import urlsafe_b64decode as b64decode
 from functools import lru_cache
 
-from flask import Flask, redirect, abort, url_for, render_template, flash
-from flask import make_response
+from flask import Flask, redirect, abort, url_for, render_template, flash, request
+from flask import make_response, jsonify
 from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms import FileField, SubmitField, StringField
-from wtforms.validators import DataRequired
-from multiprocessing import Process
-
-
-class FileForm(FlaskForm):
-    file = FileField('Please choose the file you\'d like to upload',
-                     validators=[DataRequired(message='Your must give in a file')])
-    submit = SubmitField('Submit')
 
 
 path = os.getcwd()
@@ -36,16 +27,28 @@ def icon():
 
 @app.route('/', methods='GET POST'.split())
 def index():
-    form = FileForm()
-    if form.validate_on_submit():
-        data = form.file.data
-        name = data.filename
-        p = os.path.join(path, name)
-        flash('Upload success!')
-        data.save(p)
-        form.file = FileField('Please choose the file you\'d like to upload',
-                              validators=[DataRequired(message='Your must give in a file')])
-    return render('index.html', form=form)
+    return render('index.html')
+
+@app.route('/data', methods=['post'])
+def recv():
+    print('Data got!')
+    file = bytes([int(x) for x in request.values.get('file').split(',')])
+    print('Bytes got!')
+    name = request.values.get('name')
+    with open(name, 'wb') as f:
+        f.write(file)
+    return jsonify({'code': 200, 'upload': True})
+
+@app.route('/form', methods=['get','post'])
+def form():
+    if request.method == "POST":
+        file = request.files.get("File")
+        print(dir(file))
+        file.save(file.filename)
+        flash("Upload success!")
+        return redirect(url_for('form'))
+    else:
+        return render('form.html')
 
 
 @app.route('/path/<path:stcp>')
@@ -75,7 +78,7 @@ def check(stcp, start):
             af((i, url_for('stc', filename=p)))
         else:
             ad((i, url_for('download', stcp=p)))
-    return render('files.html', dirs=d, files=f)
+    return render('files.html', dirs=d, files=f, index = False if start else True)
 
 @app.route('/stc/<path:filename>')
 @lru_cache()
@@ -94,7 +97,8 @@ if __name__ == '__main__':
         f = io.StringIO()
         with redirect_stderr(f), redirect_stdout(f):
             iapp.run(host, port)
+
     if '-q' in sys.argv or '--quiet' in  sys.argv:
-        Process(target=run_app, args = (app,)).start()
+        run_app(app, '0.0.0.0', 5050)
     else:
-        Process(target=app.run, args=('0.0.0.0', 5050)).start()
+        app.run('0.0.0.0', 5050)

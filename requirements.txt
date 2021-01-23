@@ -3,4 +3,3 @@ wheel
 setuptools
 flask
 flask-bootstrap
-flask-wtf

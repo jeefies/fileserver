@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Jeefy - {% endblock %}
 
@@ -13,8 +12,69 @@
 	<p>It's power by flask, python</p>
 	<p>You can download the files from the page <a href='{{ url_for('downloadm') }}' 
 		style='color: blue; font-size: 1em; text-decoration: none'>Download</a></p>
+	<p>If unsupport for js, <span onclick="location.href = '{{ url_for('form') }}'">click here to use plain form</span></p>
 </div>
-<div style='font-size: 1.25em; text-decoration: underline'>
-	{{ wtf.quick_form(form) }}
+<div style='font-size: 1.25em; max-width: 40em' id="Outer">
+		<input type="file" id="File">
+		<button type="button" id="Sub">Upload</button>
 </div>
+<script>
+const inp = document.getElementById('File');
+const submit = document.getElementById('Sub');
+const outer = document.getElementById("Outer");
+const o = outer.innerHTML;
+
+function success() {
+	console.log(xhr.readyState);
+	if (xhr.readyState == 4 && xhr.status == 200) {
+		outer.innerHTML = o;
+		let res = JSON.parse(xhr.responseText);
+		if (res['upload'] == true) {
+			alert('Upload Success!');
+		} else {
+			alert("Failed!");
+		}
+	};
+}
+function xhrs(data, name) {
+	if (XMLHttpRequest) {
+		xhr = new XMLHttpRequest();
+	} else {
+		xhr = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xhr.onreadystatechange = success;
+	xhr.open("POST", "/data", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+	let ctx = 'file=' + data + '&name=' + name;
+	console.log(name);
+	xhr.send(ctx);
+	console.log('sending data!');
+	return xhr
+}
+
+function upload() {
+	let file = inp.files[0];
+
+	if (!file) {
+		alert('Nothing Submit!')
+		return;
+	}
+
+
+	let reader = new FileReader();
+	reader.readAsArrayBuffer(file);
+
+	reader.onload = function(e) {
+		data = new Uint8Array(e.target.result);
+		data = data.toString();
+		console.log("Data generated");
+		name = file.name;
+		outer.innerHTML = "<P>Uploading...<p>";
+		let ixhr = xhrs(data, name);
+	}
+	alert("Start uploading!");
+}
+submit.onclick = upload;
+</script>
 {% endblock %}

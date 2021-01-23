@@ -2,6 +2,11 @@
 
 {% block content %}
 <h2>Download Index</h2>
+{% if index %}
+<p onclick="location.href = '/'">Click to go back</p>
+{% else %}
+<p onclick="history.go(-1)">Click to go back</p>
+{% endif %}
 <h3>Files</h3>
 <ul>
 	{% for f in files %}
