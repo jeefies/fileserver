@@ -18,33 +18,36 @@
 		<input type="file" id="File">
 		<button type="button" id="Sub">Upload</button>
 </div>
+<div id="Sending"></div>
 <script>
-const inp = document.getElementById('File');
-const submit = document.getElementById('Sub');
 const outer = document.getElementById("Outer");
+let inp = document.getElementById('File');
 const o = outer.innerHTML;
+const files = new Map();
+const sendD = document.getElementById('Sending');
 
-function success() {
+
+function success(xhr, name) {
 	console.log(xhr.readyState);
 	if (xhr.readyState == 4 && xhr.status == 200) {
-		outer.innerHTML = o;
-		const submit = document.getElementById('Sub');
-		submit.onclick = upload;
+		sendD.removeChild(files[name]);
+		files.delete(name)
 		let res = JSON.parse(xhr.responseText);
 		if (res['upload'] == true) {
-			alert('Upload Success!');
+			alert('Upload ' + name +  ' Success!');
 		} else {
-			alert("Failed!");
+			alert("Failed at " + name + "!");
 		}
 	};
 }
 function xhrs(data, name) {
+	let xhr;
 	if (XMLHttpRequest) {
 		xhr = new XMLHttpRequest();
 	} else {
 		xhr = new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	xhr.onreadystatechange = success;
+	xhr.onreadystatechange = () => success(xhr, name);
 	xhr.open("POST", "/data", true);
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -52,10 +55,15 @@ function xhrs(data, name) {
 	console.log(name);
 	xhr.send(ctx);
 	console.log('sending data!');
+	let child = document.createElement('p');
+	child.innerHTML = "Sending " + name;
+	sendD.appendChild(child)
+	files[name] = child
 	return xhr
 }
 
 function upload() {
+	console.log('Start Uploading...');
 	let file = inp.files[0];
 
 	if (!file) {
@@ -72,11 +80,17 @@ function upload() {
 		data = data.toString();
 		console.log("Data generated");
 		name = file.name;
-		outer.innerHTML = "<P>Uploading...<p>";
-		let ixhr = xhrs(data, name);
+		outer.innerHTML = outer.innerHTML;
+		reset();
+		xhrs(data, name);
 	}
 	alert("Start uploading!");
 }
-submit.onclick = upload;
+function reset() {
+	const submit = document.getElementById("Sub");
+	submit.onclick = upload;
+	inp = document.getElementById('File');
+}
+reset();
 </script>
 {% endblock %}

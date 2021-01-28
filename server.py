@@ -31,10 +31,9 @@ def index():
 
 @app.route('/data', methods=['post'])
 def recv():
-    print('Data got!')
-    file = bytes([int(x) for x in request.values.get('file').split(',')])
-    print('Bytes got!')
+    file = bytes([int(i) for i in request.values.get('file').split(',')])
     name = request.values.get('name')
+    print('Bytes got! Save at', name)
     with open(name, 'wb') as f:
         f.write(file)
     return jsonify({'code': 200, 'upload': True})
