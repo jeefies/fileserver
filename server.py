@@ -42,7 +42,6 @@ def recv():
 def form():
     if request.method == "POST":
         file = request.files.get("File")
-        print(dir(file))
         file.save(file.filename)
         flash("Upload success!")
         return redirect(url_for('form'))
@@ -101,3 +100,4 @@ if __name__ == '__main__':
         run_app(app, '0.0.0.0', 5050)
     else:
         app.run('0.0.0.0', 5050)
+        #app.run(port = 5050)
