@@ -12,7 +12,7 @@
 	<p>It's power by flask, python</p>
 	<p>You can download the files from the page <a href='{{ url_for('downloadm') }}' 
 		style='color: blue; font-size: 1em; text-decoration: none'>Download</a></p>
-	<p>If unsupport for js, or the file is to large <span onclick="location.href = '{{ url_for('form') }}'">click here to use plain form</span></p>
+	<p>If unsupport for js, or the file is to large <a href='{{ url_for('form') }}' style="text-decoration: none; color: rgb(40, 80, 140)">click here to use plain form</span></a></p>
 </div>
 <div style='font-size: 1.25em; max-width: 40em' id="Outer">
 		<input type="file" id="File">
