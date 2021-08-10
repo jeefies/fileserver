@@ -40,7 +40,20 @@ function success(xhr, name) {
 		}
 	};
 }
+
+function success2(name) {
+		sendD.removeChild(files[name]);
+		files.delete(name)
+		let res = JSON.parse(xhr.responseText);
+		if (res['upload'] == true) {
+			alert('Upload ' + name +  ' Success!');
+		} else {
+			alert("Failed at " + name + "!");
+		}
+}
+
 function xhrs(data, name) {
+	/*
 	let xhr;
 	if (XMLHttpRequest) {
 		xhr = new XMLHttpRequest();
@@ -50,16 +63,27 @@ function xhrs(data, name) {
 	xhr.onreadystatechange = () => success(xhr, name);
 	xhr.open("POST", "/data", true);
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	*/
 
-	let ctx = 'file=' + data + '&name=' + name;
-	console.log(name);
-	xhr.send(ctx);
+	console.log(name, data);
+
+	/*
+	let formdata = new FormData();
+	formdata.append("file", data);
+	formdata.append("name", name);
+	xhr.send(formdata);
+	*/
+
+	let adata = {'file': data, 'name': name};
+	$.post('/data', adata, () => success2(name));
+
 	console.log('sending data!');
+
 	let child = document.createElement('p');
 	child.innerHTML = "Sending " + name;
 	sendD.appendChild(child)
 	files[name] = child
-	return xhr
+	// return xhr
 }
 
 function upload() {
@@ -73,16 +97,15 @@ function upload() {
 
 
 	let reader = new FileReader();
-	reader.readAsArrayBuffer(file);
+	reader.readAsBinaryString(file);
 
 	reader.onload = function(e) {
-		data = new Uint8Array(e.target.result);
-		data = data.toString();
 		console.log("Data generated");
 		name = file.name;
 		outer.innerHTML = outer.innerHTML;
 		reset();
-		xhrs(data, name);
+		console.log(e.result);
+		xhrs(reader.result, name);
 	}
 	alert("Start uploading!");
 }

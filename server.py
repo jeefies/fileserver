@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 Easy File Server
 
@@ -61,7 +62,9 @@ def index():
 @app.route('/data', methods=['post'])
 def recv():
     # get the bytes data
-    file = bytes([int(i) for i in request.values.get('file').split(',')])
+    #allv = list(request.values.items())
+    #print(allv)
+    file = request.values.get('file').encode()
     name = request.values.get('name')
 
     print('Bytes got! Save at', name)
