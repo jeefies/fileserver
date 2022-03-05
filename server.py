@@ -30,10 +30,6 @@ from flask import (Flask, redirect, abort,
         url_for, render_template,
         flash, request, make_response,
         jsonify, Response)
-# import all methods used in the program
-# need bootstrap dependences
-from flask_bootstrap import Bootstrap
-
 
 path = os.getcwd()
 join = os.path.join
@@ -43,8 +39,6 @@ tempf = os.path.join(base, 'temps')
 # create app instance
 app = Flask(__name__, template_folder=tempf, static_folder=path)
 app.config['SECRET_KEY'] = uuid.uuid1().hex # use for session(in flash method)
-# init app for bootstrap
-bootstrap = Bootstrap(app)
 
 render = render_template # generate shortcut for render
 
@@ -67,8 +61,6 @@ def recv():
     file = request.values.get('file').encode()
     name = request.values.get('name')
 
-    print('Bytes got! Save at', name)
-    
     with open(name, 'wb') as f:
         f.write(file)
     
